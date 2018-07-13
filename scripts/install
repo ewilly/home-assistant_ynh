@@ -58,7 +58,7 @@ pip3 install $app=="$UPSTREAM_VERSION"
 #hass
 
 # quit the virtual environment
-deactivate
+#deactivate
 
 # setup up autostart using systemd
 cp ../conf/hass.service /etc/systemd/system/$app@$app.service
