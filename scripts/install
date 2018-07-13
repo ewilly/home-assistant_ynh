@@ -91,11 +91,10 @@ systemctl enable $app-configurator@$app
 systemctl restart $app-configurator@$app
 
 # create a dedicated nginx config
+## for Home Assistant configurator (before because ynh_add_nginx_config reload nginx and give an error due to __PORT-CONFIGURATOR__)
+ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/nginx.conf"
 ## for Home Assistant
 ynh_add_nginx_config
-## for Home Assistant configurator
-### $finalnginxconf comes from ynh_add_nginx_config
-ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "$finalnginxconf"
 
 # reload nginx
 systemctl reload nginx
