@@ -41,7 +41,7 @@ chown $app:$app $final_path
 
 # create and change to a virtual environment for Home Assistant
 ## create the virtual environment
-exec_as "$app" -H -s "python3 -m venv $final_path"
+exec_as "$app" -H -s -c "python3 -m venv $final_path"
 ## activate the virtual environment
 source $final_path/bin/activate
 

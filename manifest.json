@@ -37,8 +37,8 @@
         "ask": {
           "en": "Choose a path for Home Assistant"
         },
-        "example": "/hass",
-        "default": "/hass"
+        "example": "/homeassistant",
+        "default": "/homeassistant"
       }
     ]
   }
