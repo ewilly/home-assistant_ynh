@@ -28,9 +28,12 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app path $path_url
 
-# Find a free port
+# find a free port
 port=$(ynh_find_port 8123)
 ynh_app_setting_set $app port $port
+
+# open this port
+yunohost firewall allow TCP $port > /dev/null 2>&1
 
 # create a dedicated system user
 useradd -rm $app -G dialout,gpio
@@ -46,13 +49,13 @@ exec_as "$app" -H -s /bin/bash -c "python3 -m venv $final_path"
 exec_as "$app" -H -s /bin/bash -c "source $final_path/bin/activate"
 
 # install a required python package
-pip3 install wheel
+python3 -m pip install wheel
 
 # install Home Assistant
 pip3 install $app=="$UPSTREAM_VERSION"
 
 # complete the installation
-hass
+#hass
 
 # quit the virtual environment
 deactivate
@@ -73,5 +76,3 @@ systemctl reload nginx
 
 # restart Home Assistant
 systemctl restart $app@$app
-
-
