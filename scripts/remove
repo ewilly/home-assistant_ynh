@@ -9,6 +9,7 @@ source /usr/share/yunohost/helpers
 app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get "$app" domain)
 port=$(ynh_app_setting_get $app port)
+port_configurator=$(ynh_app_setting_get $app port_configurator)
 
 # definie useful vars
 final_path="/srv/$app"
@@ -27,16 +28,35 @@ ynh_remove_nginx_config
 ynh_secure_remove "$data_path"
 
 # remove systemd service
+## for Home Assistant
 systemctl disable $app@$app
 ynh_secure_remove "/etc/systemd/system/$app@$app.service"
-systemctl --system daemon-reload
+## for Home Assistant configurator
+systemctl disable $app-configurator@$app
+ynh_secure_remove "/etc/systemd/system/$app-configurator@$app.service"
 
 # remove service from admin panel
-if yunohost service status | grep -q $app
+## for Home Assistant
+if yunohost service status | grep -q $app@$app
 then
-	echo "Remove $app service"
-	yunohost service remove $app
+	echo "Remove $app@$app service"
+	yunohost service remove $app@$app
+fi
+## for Home Assistant configurator
+if yunohost service status | grep -q $app-configurator@$app
+then
+	echo "Remove $app-configurator@$app service"
+	yunohost service remove $app-configurator@$app
 fi
 
 # delete a system user
 ynh_system_user_delete "$app"
+
+# close port
+## for Home Assistant
+yunohost firewall disallow TCP $port > /dev/null 2>&1
+## for Home Assistant configurator
+yunohost firewall disallow TCP $port_configurator > /dev/null 2>&1
+
+# reload firewall
+yunohost firewall reload

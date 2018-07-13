@@ -28,12 +28,15 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app path $path_url
 
-# find a free port
+# find a free port & open it
+## for Home Assistant 
 port=$(ynh_find_port 8123)
 ynh_app_setting_set $app port $port
-
-# open this port
 yunohost firewall allow TCP $port > /dev/null 2>&1
+## for Home Assistant configurator
+port_configurator=$(ynh_find_port 3218)
+ynh_app_setting_set $app port_configurator $port_configurator
+yunohost firewall allow TCP $port_configurator > /dev/null 2>&1
 
 # create a dedicated system user
 useradd -rm $app -G dialout,gpio
@@ -42,48 +45,54 @@ useradd -rm $app -G dialout,gpio
 myynh_create_dir $final_path
 chown $app:$app $final_path
 
-# create and change to a virtual environment for Home Assistant
-## log as homeassistant user
-#sudo -u homeassistant -H -s
-## create the virtual environment
-#exec_as "$app" -H -s /bin/bash -c "python3 -m venv $final_path"
-#python3 -m venv $final_path
-## activate the virtual environment
-#exec_as "$app" -H -s /bin/bash -c "source $final_path/bin/activate"
-#source $final_path/bin/activate
+# create a directory for the datas of Home Assistant
+myynh_create_dir $data_path
+chown $app:$app $data_path
 
-# install a required python package
-#python3 -m pip install wheel
-
-# install Home Assistant
-#pip3 install $app=="$UPSTREAM_VERSION"
-
-# complete the installation
-#hass
-
-# quit the virtual environment
-#deactivate
-exec_as "$app" -H -s /bin/bash -c "
-  python3 -m venv $final_path \
+# installation
+## for Home Assistant in a virtual environment
+exec_as "$app" -H -s /bin/bash -c " \
+	# create the virtual environment
+	python3 -m venv $final_path \
+	# activate the virtual environment
 	&& source $final_path/bin/activate \
+	# install a required python package
 	&& python3 -m pip install wheel \
+	# install Home Assistant
 	&& pip3 install $app==$UPSTREAM_VERSION
+	# install Home Assistant configurator
+	&& wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py
+	&& chmod 755 configurator.py
+	# quit the virtual environment
 	&& deactivate \
-  "
+	"
 
 # setup up autostart using systemd
-cp ../conf/hass.service /etc/systemd/system/$app@$app.service
-systemctl --system daemon-reload
+## for Home Assistant
 systemctl enable $app@$app
+## for Home Assistant configurator
+cp ../conf/$app-configurator.service /etc/systemd/system/$app-configurator@$app.service
 
 # add service in admin panel
+## for Home Assistant
 yunohost service add $app@$app
+## for Home Assistant configurator
+yunohost service add $app-configurator@$app
+
+# enable & restart service
+systemctl --system daemon-reload
+## for Home Assistant
+systemctl enable $app@$app
+systemctl restart $app@$app
+## for Home Assistant configurator
+systemctl enable $app-configurator@$app
+systemctl restart $app-configurator@$app
 
 # create a dedicated nginx config
+## for Home Assistant
 ynh_add_nginx_config
+## for Home Assistant configurator
 
 # reload nginx
 systemctl reload nginx
 
-# restart Home Assistant
-systemctl restart $app@$app
