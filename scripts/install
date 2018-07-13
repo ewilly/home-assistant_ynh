@@ -77,7 +77,7 @@ systemctl --system daemon-reload
 systemctl enable $app@$app
 
 # add service in admin panel
-yunohost service add $app
+yunohost service add $app@$app
 
 # create a dedicated nginx config
 ynh_add_nginx_config
