@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -eu
+source _common.sh
+source /usr/share/yunohost/helpers
+
+# manage script failure
+ynh_abort_if_errors
+
+# retrieve arguments
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+app=$YNH_APP_INSTANCE_NAME
+
+# definie useful vars
+final_path="/srv/$app"
+data_path="/home/$app/.$app"
+
+# check domain/path availability
+path_url=$(ynh_normalize_url_path $path_url)
+ynh_webpath_available $domain $path_url
+ynh_webpath_register $app $domain $path_url
+
+# add required packages
+ynh_install_app_dependencies "$PKG_DEPENDENCIES"
+
+# save app settings
+ynh_app_setting_set $app domain $domain
+ynh_app_setting_set $app path $path_url
+
+# Find a free port
+port=$(ynh_find_port 8123)
+ynh_app_setting_set $app port $port
+
+# create a dedicated system user
+useradd -rm $app -G dialout,gpio
+
+# create a directory for the installation of Home Assistant
+myynh_create_dir $final_path
+chown $app:$app $final_path
+
+# create and change to a virtual environment for Home Assistant
+## create the virtual environment
+exec_as "$app" -H -s "python3 -m venv $final_path"
+## activate the virtual environment
+source $final_path/bin/activate
+
+# install a required python package
+pip3 install wheel
+
+# install Home Assistant
+pip3 install $app=="$UPSTREAM_VERSION"
+
+# complete the installation
+hass
+
+# quit the virtual environment
+deactivate
+
+# setup up autostart using systemd
+cp ../conf/hass.service /etc/systemd/system/$app@$app.service
+systemctl --system daemon-reload
+systemctl enable $app@$app
+
+# add service in admin panel
+yunohost service add $app
+
+# create a dedicated nginx config
+ynh_add_nginx_config
+
+# reload nginx
+systemctl reload nginx
+
+# restart Home Assistant
+systemctl restart $app@$app
+
+

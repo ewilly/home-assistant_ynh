@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -eu
+source _common.sh
+source /usr/share/yunohost/helpers
+
+# manage script failure
+ynh_abort_if_errors
+
+# retrieve arguments
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get $app domain)
+path_url=$(ynh_app_setting_get $app path)
+port=$(ynh_app_setting_get $app port)
+
+# definie useful vars
+final_path="/srv/$app"
+data_path="/home/$app/.$app"
+
+# use prior backup and restore on error only if backup feature exists on installed instance
+if [ -f "/etc/yunohost/apps/$app/scripts/backup" ] ; then
+  ynh_backup_before_upgrade # Backup the current version of the app
+  ynh_clean_setup () {
+      ynh_restore_upgradebackup
+  }
+fi
+
+# add required packages
+ynh_install_app_dependencies "$PKG_DEPENDENCIES"
+
+# stop Home Assistant
+systemctl stop $app@$app.service
+
+# upgrade Home Assistant
+source "$final_path"/bin/activate
+exec_as "$app" -H -s "pip3 install --upgrade $app==$UPSTREAM_VERSION"
+
+# reload nginx
+systemctl reload nginx
+
+# restart Home Assistant
+systemctl restart $app@$app

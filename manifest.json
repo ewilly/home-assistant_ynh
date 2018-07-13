@@ -1,0 +1,45 @@
+{
+  "name": "Home Assistant",
+  "id": "homeassistant",
+  "packaging_format": 1,
+   "description": {
+    "en": "Home automation platform",
+    "fr": "Plateforme domotique"
+  },
+  "version": "1.0.0",
+  "url": "https://github.com/home-assistant/home-assistant",
+  "license": "Apache",
+  "maintainer": {
+    "name": "ewilly",
+    "email": "ewilly@ewilly.fr"
+  },
+  "requirements": {
+        "yunohost": ">= 2.7.2"
+  },
+  "multi_instance": false,
+  "services": [
+      "nginx",
+      "homeassistant"
+  ],
+  "arguments": {
+    "install": [
+      {
+        "name": "domain",
+        "type": "domain",
+        "ask": {
+          "en": "Choose a domain for Home Assistant"
+        },
+        "example": "domain.org"
+      },
+      {
+        "name": "path",
+        "type": "path",
+        "ask": {
+          "en": "Choose a path for Home Assistant"
+        },
+        "example": "/hass",
+        "default": "/hass"
+      }
+    ]
+  }
+}
