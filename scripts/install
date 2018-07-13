@@ -52,18 +52,18 @@ chown $app:$app $data_path
 # installation
 ## for Home Assistant in a virtual environment
 exec_as "$app" -H -s /bin/bash -c " \
-	# create the virtual environment
+	# create the virtual environment \
 	python3 -m venv $final_path \
-	# activate the virtual environment
+	# activate the virtual environment \
 	&& source $final_path/bin/activate \
-	# install a required python package
+	# install a required python package \
 	&& python3 -m pip install wheel \
-	# install Home Assistant
-	&& pip3 install $app==$UPSTREAM_VERSION
-	# install Home Assistant configurator
-	&& wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py
-	&& chmod 755 configurator.py
-	# quit the virtual environment
+	# install Home Assistant \
+	&& pip3 install $app==$UPSTREAM_VERSION \
+	# install Home Assistant configurator \
+	&& wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py \
+	&& chmod 755 configurator.py \
+	# quit the virtual environment \
 	&& deactivate \
 	"
 
