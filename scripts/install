@@ -69,8 +69,10 @@ exec_as "$app" -H -s /bin/bash -c " \
 
 # setup up autostart using systemd
 ## for Home Assistant
-systemctl enable $app@$app
+ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
+cp ../conf/$app.service /etc/systemd/system/$app@$app.service
 ## for Home Assistant configurator
+ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/$app-configurator.service"
 cp ../conf/$app-configurator.service /etc/systemd/system/$app-configurator@$app.service
 
 # add service in admin panel
@@ -92,6 +94,8 @@ systemctl restart $app-configurator@$app
 ## for Home Assistant
 ynh_add_nginx_config
 ## for Home Assistant configurator
+### $finalnginxconf comes from ynh_add_nginx_config
+ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "$finalnginxconf"
 
 # reload nginx
 systemctl reload nginx

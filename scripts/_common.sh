@@ -38,17 +38,6 @@ myynh_clean_source () {
 	[ -e "$TMPDIR/.gitignore" ] && rm -r "$TMPDIR/.gitignore"
 }
 
-myynh_set_permissions () {
-	[ $(find "$final_path" -type f | wc -l) -gt 0 ] && find "$final_path" -type f | xargs chmod 0644
-	[ $(find "$final_path" -type d | wc -l) -gt 0 ] && find "$final_path" -type d | xargs chmod 0755
-	[ $(find "$data_path" -type f | wc -l) -gt 0 ] && find "$data_path" -type f | xargs chmod 0644
-	[ $(find "$data_path" -type d | wc -l) -gt 0 ] && find "$data_path" -type d | xargs chmod 0755
-	chown -R root:"$app" "$final_path"
-	chown -R "$app": "$final_path/private"
-	chown -R "$app": "$data_path"
-	chown root: "$data_path"
-}
-
 #=================================================
 # FUTURE YUNOHOST HELPERS - TO BE REMOVED LATER
 #=================================================

@@ -7,7 +7,7 @@ Type=simple
 User=homeassistant
 # Set configuration options by specifying environment variables
 # Environment=HC_LISTENIP=0.0.0.0
-# Environment=HC_PORT=3218
+Environment=HC_PORT=__PORT-CONFIGURATOR__
 # Environment=HC_GIT=false
 # Environment=HC_ALLOWED_NETWORKS=192.168.1.0/24,127.0.0.1
 # ...

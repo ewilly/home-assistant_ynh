@@ -57,6 +57,3 @@ ynh_system_user_delete "$app"
 yunohost firewall disallow TCP $port > /dev/null 2>&1
 ## for Home Assistant configurator
 yunohost firewall disallow TCP $port_configurator > /dev/null 2>&1
-
-# reload firewall
-yunohost firewall reload
