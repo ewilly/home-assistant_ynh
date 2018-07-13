@@ -43,22 +43,33 @@ myynh_create_dir $final_path
 chown $app:$app $final_path
 
 # create and change to a virtual environment for Home Assistant
+## log as homeassistant user
+#sudo -u homeassistant -H -s
 ## create the virtual environment
-exec_as "$app" -H -s /bin/bash -c "python3 -m venv $final_path"
+#exec_as "$app" -H -s /bin/bash -c "python3 -m venv $final_path"
+#python3 -m venv $final_path
 ## activate the virtual environment
-exec_as "$app" -H -s /bin/bash -c "source $final_path/bin/activate"
+#exec_as "$app" -H -s /bin/bash -c "source $final_path/bin/activate"
+#source $final_path/bin/activate
 
 # install a required python package
-python3 -m pip install wheel
+#python3 -m pip install wheel
 
 # install Home Assistant
-pip3 install $app=="$UPSTREAM_VERSION"
+#pip3 install $app=="$UPSTREAM_VERSION"
 
 # complete the installation
 #hass
 
 # quit the virtual environment
 #deactivate
+exec_as "$app" -H -s /bin/bash -c "
+  python3 -m venv $final_path \
+	&& source $final_path/bin/activate \
+	&& python3 -m pip install wheel \
+	&& pip3 install $app==$UPSTREAM_VERSION
+	&& deactivate \
+  "
 
 # setup up autostart using systemd
 cp ../conf/hass.service /etc/systemd/system/$app@$app.service
