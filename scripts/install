@@ -50,6 +50,10 @@ myynh_create_dir $data_path
 chown $app:$app $data_path
 
 # installation
+## for Home Assistant configurator
+wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py -O $final_path\configurator.py
+chown $app:$app $final_path\configurator.py
+chmod 755 $final_path\configurator.py
 ## for Home Assistant in a virtual environment
 exec_as "$app" -H -s /bin/bash -c " \
 	echo 'create the virtual environment' \
@@ -60,9 +64,6 @@ exec_as "$app" -H -s /bin/bash -c " \
 		&& python3 -m pip install wheel \
 	&& echo 'install Home Assistant' \
 		&& pip3 install $app==$UPSTREAM_VERSION \
-	&& echo 'install Home Assistant configurator' \
-		&& wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py \
-		&& chmod 755 configurator.py \
 	&& echo 'quit the virtual environment' \
 		&& deactivate \
 	"
