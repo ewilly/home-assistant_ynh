@@ -69,6 +69,28 @@ wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/co
 chown $app:$app $data_path\configurator.py
 chmod 755 $data_path\configurator.py
 
+
+# set default configuration files
+## for Home Assistant
+### for configuration.yaml
+ynh_replace_string "__PORT__" "$port" "../conf/configuration.yaml"
+ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configuration.yaml"
+cp "../conf/configuration.yaml" "$data_path/configuration.yaml"
+chown $app:$app "$data_path/configuration.yaml"
+
+### for secrets.yaml
+ynh_replace_string "__PASSWORD__" "$password" "../conf/secrets.yaml"
+cp "../conf/secrets.yaml" "$data_path/secrets.yaml"
+chown $app:$app "$data_path/secrets.yaml"
+
+## for Home Assistant configurator
+password_configurator=$(echo -n "$password_configurator" | sha256sum)
+ynh_replace_string "__PASSWORD-CONFIGURATOR__" "$password_configurator" "../conf/configurator_settings.conf"
+ynh_replace_string "__PORT__" "$port" "../conf/configurator_settings.conf"
+ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configurator_settings.conf"
+cp "../conf/configurator_settings.conf" "$data_path/configurator_settings.conf"
+chown $app:$app "$data_path/configurator_settings.conf"
+
 # setup up autostart using systemd
 ## for Home Assistant
 ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
