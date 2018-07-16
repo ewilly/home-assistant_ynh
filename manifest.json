@@ -32,13 +32,20 @@
         "example": "domain.org"
       },
       {
-        "name": "path",
-        "type": "path",
+        "name": "password",
+        "type": "password",
         "ask": {
-          "en": "Choose a path for Home Assistant"
+          "en": "Choose a password for Home Assistant"
         },
-        "example": "/homeassistant",
-        "default": "/homeassistant"
+        "example": "super_secret_password"
+      }
+      {
+        "name": "password_configurator",
+        "type": "password",
+        "ask": {
+          "en": "Choose a password for Home Assistant Configurator (user will be admin)"
+        },
+        "example": "super_secret_password"
       }
     ]
   }
