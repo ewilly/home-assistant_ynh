@@ -12,9 +12,9 @@ Environment=HC_PORT=__PORT-CONFIGURATOR__
 # Environment=HC_ALLOWED_NETWORKS=192.168.1.0/24,127.0.0.1
 # ...
 # Set the path to your configurator.py location
-WorkingDirectory=/srv/homeassistant
+WorkingDirectory=/home/homeassistant/.homeassistant
 # You can also save your static options in a JSON formatted conf-file
-ExecStart=/usr/bin/python3 /srv/homeassistant/configurator.py /home/homeassistant/.homeassistant/configurator_settings.conf
+ExecStart=/usr/bin/python3 /home/homeassistant/.homeassistant/configurator.py /home/homeassistant/.homeassistant/configurator_settings.conf
 Restart=always
 
 [Install]

@@ -50,10 +50,6 @@ myynh_create_dir $data_path
 chown $app:$app $data_path
 
 # installation
-## for Home Assistant configurator
-wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py -O $final_path\configurator.py
-chown $app:$app $final_path\configurator.py
-chmod 755 $final_path\configurator.py
 ## for Home Assistant in a virtual environment
 exec_as "$app" -H -s /bin/bash -c " \
 	echo 'create the virtual environment' \
@@ -67,6 +63,10 @@ exec_as "$app" -H -s /bin/bash -c " \
 	&& echo 'quit the virtual environment' \
 		&& deactivate \
 	"
+## for Home Assistant configurator
+wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py -O $data_path\configurator.py
+chown $app:$app $data_path\configurator.py
+chmod 755 $data_path\configurator.py
 
 # setup up autostart using systemd
 ## for Home Assistant
