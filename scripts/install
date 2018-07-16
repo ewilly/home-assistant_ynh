@@ -8,9 +8,10 @@ source /usr/share/yunohost/helpers
 ynh_abort_if_errors
 
 # retrieve arguments
-domain=$YNH_APP_ARG_DOMAIN
 app=$YNH_APP_INSTANCE_NAME
+domain=$YNH_APP_ARG_DOMAIN
 password=$YNH_APP_ARG_PASSWORD
+password_configurator=$YNH_APP_ARG_PASSWORD_CONFIGURATOR
 
 # definie useful vars
 final_path="/srv/$app"
