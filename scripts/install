@@ -100,3 +100,5 @@ ynh_add_nginx_config
 # reload nginx
 systemctl reload nginx
 
+# set public access (needed for Android app to work)
+ynh_app_setting_set "$app" unprotected_uris "/"
