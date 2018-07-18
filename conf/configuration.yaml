@@ -90,4 +90,4 @@ panel_iframe:
   configurator:
     title: Configurator
     icon: mdi:wrench
-    url: http://127.0.0.1:__PORT-CONFIGURATOR__
+    url: https://__DOMAIN__/configurator
