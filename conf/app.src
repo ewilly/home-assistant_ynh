@@ -1,0 +1,5 @@
+# Upstream version
+## for Home Assistant
+UPSTREAM_HA_VERSION=0.73.1
+## for Home Assistant configurator
+UPSTREAM_CONFIGURATOR_VERSION=0.3.1

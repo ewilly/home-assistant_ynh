@@ -2,9 +2,6 @@
 # Common variables & functions
 #
 
-# Upstream version
-UPSTREAM_VERSION=0.73.1
-
 # Package dependencies
 PKG_DEPENDENCIES="python3 python3-venv python3-pip"
 

@@ -28,7 +28,9 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 
 # save app settings
 ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
+ynh_app_setting_set $app password $password
+ynh_app_setting_set $app password_configurator $password_configurator
+ynh_app_setting_set $app is_public $is_public
 
 # find a free port & open it
 ## for Home Assistant 
@@ -51,6 +53,11 @@ chown $app:$app $final_path
 myynh_create_dir $data_path
 chown $app:$app $data_path
 
+# retrieve upstream version
+source ../conf/app.src
+ynh_app_setting_set $app ha_version $UPSTREAM_HA_VERSION
+ynh_app_setting_set $app configurator_version $UPSTREAM_CONFIGURATOR_VERSION
+
 # installation
 ## for Home Assistant in a virtual environment
 exec_as "$app" -H -s /bin/bash -c " \
@@ -61,15 +68,14 @@ exec_as "$app" -H -s /bin/bash -c " \
 	&& echo 'install a required python package' \
 		&& python3 -m pip install wheel \
 	&& echo 'install Home Assistant' \
-		&& pip3 install $app==$UPSTREAM_VERSION \
+		&& pip3 install $app==$UPSTREAM_HA_VERSION \
 	&& echo 'quit the virtual environment' \
 		&& deactivate \
 	"
 ## for Home Assistant configurator
-wget https://raw.githubusercontent.com/danielperna84/hass-configurator/master/configurator.py -O $data_path\configurator.py
+wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O $data_path\configurator.py
 chown $app:$app $data_path\configurator.py
 chmod 755 $data_path\configurator.py
-
 
 # set default configuration files
 ## for Home Assistant
@@ -106,7 +112,7 @@ yunohost service add $app@$app
 ## for Home Assistant configurator
 yunohost service add $app-configurator@$app
 
-# enable & restart service
+# enable & restart systemd service
 systemctl --system daemon-reload
 ## for Home Assistant
 systemctl enable $app@$app
