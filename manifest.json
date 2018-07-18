@@ -19,7 +19,8 @@
   "multi_instance": false,
   "services": [
       "nginx",
-      "homeassistant"
+      "homeassistant@homeassistant",      
+      "homeassistant-configurator@homeassistant"
   ],
   "arguments": {
     "install": [
@@ -27,7 +28,8 @@
         "name": "domain",
         "type": "domain",
         "ask": {
-          "en": "Choose a domain for Home Assistant"
+          "en": "Choose a domain for Home Assistant",
+          "fr": "Choisissez un domaine pour Home Assistant"
         },
         "example": "domain.org"
       },
@@ -35,17 +37,28 @@
         "name": "password",
         "type": "password",
         "ask": {
-          "en": "Choose a password for Home Assistant"
+          "en": "Choose a password for Home Assistant",
+          "fr": "Choisissez un mot de passe pour Home Assistant"
         },
         "example": "super_secret_password"
-      }
+      },
       {
         "name": "password_configurator",
         "type": "password",
         "ask": {
-          "en": "Choose a password for Home Assistant Configurator (user will be admin)"
+          "en": "Choose a password for Home Assistant Configurator (user will be : admin)",
+          "fr": "Choisissez un mot de passe pour Home Assistant Configurator (l'utilistateur sera : admin)"
         },
         "example": "super_secret_password"
+      },
+      {
+        "name": "is_public",
+        "type": "boolean",
+        "ask": {
+          "en": "Should this application be public ? (if not, Smartphone app will not work)",
+          "fr": "Est-ce que cette application doit être visible publiquement ? (dans le cas contraire, l'application sur Smartphone ne fonctionnera pas)"
+        },
+        "default": true
       }
     ]
   }

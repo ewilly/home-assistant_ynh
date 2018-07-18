@@ -12,6 +12,7 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
 password=$YNH_APP_ARG_PASSWORD
 password_configurator=$YNH_APP_ARG_PASSWORD_CONFIGURATOR
+is_public=$YNH_APP_ARG_IS_PUBLIC
 
 # definie useful vars
 final_path="/srv/$app"
@@ -123,5 +124,7 @@ ynh_add_nginx_config
 # reload nginx
 systemctl reload nginx
 
-# set public access (needed for Android app to work)
-ynh_app_setting_set "$app" unprotected_uris "/"
+# unprotect app access if public (needed for Android app to work)
+if [ $is_public -eq 1 ]; then
+	ynh_app_setting_set "$app" unprotected_uris "/"
+fi
