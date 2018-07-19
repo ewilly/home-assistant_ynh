@@ -34,6 +34,15 @@
         "example": "domain.org"
       },
       {
+        "name": "has_password",
+        "type": "boolean",
+        "ask": {
+          "en": "Should we add a password to access to the app? (if not, don't turn it to public!)",
+          "fr": "Doit-on ajouter une demande de mot de passe pour accéder à cette application  ? (dans le cas contraire, ne laisser pas le mode publique !)"
+        },
+        "default": true
+      },
+      {
         "name": "password",
         "type": "password",
         "ask": {
@@ -43,11 +52,20 @@
         "example": "super_secret_password"
       },
       {
+        "name": "username_configurator",
+        "type": "user",
+        "ask": {
+          "en": "Choose a username for Home Assistant Configurator",
+          "fr": "Choisissez un nom d'utilisateur pour Home Assistant Configurator"
+        },
+        "example": "homer"
+      },
+      {
         "name": "password_configurator",
         "type": "password",
         "ask": {
-          "en": "Choose a password for Home Assistant Configurator (user will be : admin)",
-          "fr": "Choisissez un mot de passe pour Home Assistant Configurator (l'utilistateur sera : admin)"
+          "en": "Choose a password for Home Assistant Configurator",
+          "fr": "Choisissez un mot de passe pour Home Assistant Configurator"
         },
         "example": "super_secret_password"
       },

@@ -10,7 +10,9 @@ ynh_abort_if_errors
 # retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
+has_password=$YNH_APP_ARG_HAS_PASSWORD
 password=$YNH_APP_ARG_PASSWORD
+username_configurator=$YNH_APP_ARG_USERNAME_CONFIGURATOR
 password_configurator=$YNH_APP_ARG_PASSWORD_CONFIGURATOR
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
@@ -28,7 +30,9 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 
 # save app settings
 ynh_app_setting_set $app domain $domain
+ynh_app_setting_set $app has_password $has_password
 ynh_app_setting_set $app password $password
+ynh_app_setting_set $app username_configurator $username_configurator
 ynh_app_setting_set $app password_configurator $password_configurator
 ynh_app_setting_set $app is_public $is_public
 
@@ -80,8 +84,11 @@ chmod 755 $data_path\configurator.py
 # set default configuration files
 ## for Home Assistant
 ### for configuration.yaml
+if [ $has_password -eq 1 ]; then
+	ynh_replace_string "# api_password" "api_password" "../conf/configuration.yaml"
+fi
 ynh_replace_string "__PORT__" "$port" "../conf/configuration.yaml"
-ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configuration.yaml"
+ynh_replace_string "__DOMAIN__" "$domain" "../conf/configuration.yaml"
 cp "../conf/configuration.yaml" "$data_path/configuration.yaml"
 chown $app:$app "$data_path/configuration.yaml"
 
@@ -92,7 +99,8 @@ chown $app:$app "$data_path/secrets.yaml"
 
 ## for Home Assistant configurator
 password_configurator=$(echo -n "$password_configurator" | sha256sum)
-ynh_replace_string "__PASSWORD-CONFIGURATOR__" "$password_configurator" "../conf/configurator_settings.conf"
+ynh_replace_string "USERNAME"""": null" """"USERNAME"""": """"$username_configurator"""" "../conf/configurator_settings.conf"
+ynh_replace_string "PASSWORD"""": null" """"PASSWORD"""": """"{sha256}$password_configurator"""" "../conf/configurator_settings.conf"
 ynh_replace_string "__PORT__" "$port" "../conf/configurator_settings.conf"
 ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configurator_settings.conf"
 cp "../conf/configurator_settings.conf" "$data_path/configurator_settings.conf"
