@@ -29,11 +29,11 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 
 # save app settings
 ynh_app_setting_set $app domain $domain
+ynh_app_setting_set $app is_public $is_public
 ynh_app_setting_set $app has_password $has_password
 ynh_app_setting_set $app password $password
 ynh_app_setting_set $app username_configurator $username_configurator
 ynh_app_setting_set $app password_configurator $password_configurator
-ynh_app_setting_set $app is_public $is_public
 
 # find a free port & open it
 ## for Home Assistant 
