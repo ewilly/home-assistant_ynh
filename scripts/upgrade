@@ -10,7 +10,6 @@ ynh_abort_if_errors
 # retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
 port=$(ynh_app_setting_get $app port)
 port_configurator=$(ynh_app_setting_get $app port_configurator)
 

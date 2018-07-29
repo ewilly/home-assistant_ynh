@@ -10,12 +10,11 @@ ynh_abort_if_errors
 # retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
+is_public=$YNH_APP_ARG_IS_PUBLIC
 has_password=$YNH_APP_ARG_HAS_PASSWORD
 password=$YNH_APP_ARG_PASSWORD
 username_configurator=$YNH_APP_ARG_USERNAME_CONFIGURATOR
 password_configurator=$YNH_APP_ARG_PASSWORD_CONFIGURATOR
-is_public=$YNH_APP_ARG_IS_PUBLIC
-
 # definie useful vars
 final_path="/srv/$app"
 data_path="/home/$app/.$app"
@@ -98,9 +97,11 @@ cp "../conf/secrets.yaml" "$data_path/secrets.yaml"
 chown $app:$app "$data_path/secrets.yaml"
 
 ## for Home Assistant configurator
-password_configurator=$(echo -n "$password_configurator" | sha256sum)
-ynh_replace_string "USERNAME"""": null" """"USERNAME"""": """"$username_configurator"""" "../conf/configurator_settings.conf"
-ynh_replace_string "PASSWORD"""": null" """"PASSWORD"""": """"{sha256}$password_configurator"""" "../conf/configurator_settings.conf"
+if test -n "${username_configurator:-}"; then
+	password_configurator=$(echo -n "$password_configurator" | sha256sum)
+	ynh_replace_string "USERNAME"""": null" """"USERNAME"""": """"$username_configurator"""" "../conf/configurator_settings.conf"
+	ynh_replace_string "PASSWORD"""": null" """"PASSWORD"""": """"{sha256}$password_configurator"""" "../conf/configurator_settings.conf"
+fi
 ynh_replace_string "__PORT__" "$port" "../conf/configurator_settings.conf"
 ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configurator_settings.conf"
 cp "../conf/configurator_settings.conf" "$data_path/configurator_settings.conf"
