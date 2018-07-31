@@ -101,12 +101,12 @@ if test -n "${username_configurator:-}"; then
 	### username
 	match_string='"USERNAME": null'
 	replace_string='"USERNAME": "'${username_configurator}'"'
-	ynh_replace_string ${match_string} ${replace_string} "../conf/configurator_settings.conf"
+	ynh_replace_string "${match_string}" "${replace_string}" "../conf/configurator_settings.conf"
 	### password
 	password_configurator=$(echo -n "$password_configurator" | sha256sum)
 	match_string='"PASSWORD": null'
 	replace_string='"PASSWORD": "{sha256}'${password_configurator}'"'
-	ynh_replace_special_string ${match_string} ${replace_string} "../conf/configurator_settings.conf"
+	ynh_replace_special_string "${match_string}" "${replace_string}" "../conf/configurator_settings.conf"
 fi
 ynh_replace_string "__PORT__" "$port" "../conf/configurator_settings.conf"
 ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configurator_settings.conf"
