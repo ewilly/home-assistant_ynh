@@ -99,13 +99,13 @@ chown $app:$app "$data_path/secrets.yaml"
 ## for Home Assistant configurator
 if test -n "${username_configurator:-}"; then
 	### username
-	local match_string='"USERNAME": null'
-	local replace_string='"USERNAME": "'${username_configurator}'"'
+	match_string='"USERNAME": null'
+	replace_string='"USERNAME": "'${username_configurator}'"'
 	ynh_replace_string ${match_string} ${replace_string} "../conf/configurator_settings.conf"
 	### password
 	password_configurator=$(echo -n "$password_configurator" | sha256sum)
-	local match_string='"PASSWORD": null'
-	local replace_string='"PASSWORD": "{sha256}'${password_configurator}'"'
+	match_string='"PASSWORD": null'
+	replace_string='"PASSWORD": "{sha256}'${password_configurator}'"'
 	ynh_replace_special_string ${match_string} ${replace_string} "../conf/configurator_settings.conf"
 fi
 ynh_replace_string "__PORT__" "$port" "../conf/configurator_settings.conf"
