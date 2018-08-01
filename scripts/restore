@@ -1,0 +1,77 @@
+#!/bin/bash
+# to test the functionnality :
+# yunohost backup create -n "homeassistant-test" --ignore-system --apps homeassistant
+# yunohost app remove homeassistant
+# yunohost backup restore "homeassistant-test"
+
+set -eu
+source _common.sh
+source /usr/share/yunohost/helpers
+
+# manage script failure
+ynh_abort_if_errors
+
+# retrieve arguments
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get "$app" domain)
+port=$(ynh_app_setting_get "$app" port)
+port_configurator=$(ynh_app_setting_get "$app" port_configurator)
+
+# definie useful vars
+final_path="/srv/$app"
+data_path="/home/$app/.$app"
+
+# check domain/path availability
+path_url=$(ynh_normalize_url_path "/")
+ynh_webpath_available $domain $path_url \
+	|| ynh_die "Path not available: ${domain}${path_url}"
+ynh_webpath_register $app $domain $path_url
+
+# add required packages
+ynh_install_app_dependencies "$PKG_DEPENDENCIES"
+
+# restore dedicated system user
+ynh_system_user_exists "$app" || \
+	useradd -rm $app -G dialout,gpio
+
+# restore conf files
+ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore_file "/etc/systemd/system/$app@$app.service"
+ynh_restore_file "/etc/systemd/system/$app-configurator@$app.service"
+
+# restore source
+if [ ! -d "$final_path" ]; then
+	ynh_restore_file "$final_path"
+else
+	ynh_die "There is already a directory: $final_path"
+fi
+
+# restore data
+if [ ! -d "$data_path" ]; then
+	ynh_restore_file "$data_path"
+	chown -R $app: "$data_path"
+	chmod 755 "$data_path\configurator.py"
+else
+	ynh_die "$data_path already exists and will not be overwritten"
+fi
+
+# TODO : restore ports
+
+
+# add service in admin panel
+## for Home Assistant
+yunohost service add $app@$app
+## for Home Assistant configurator
+yunohost service add $app-configurator@$app
+
+# enable & restart systemd service
+systemctl --system daemon-reload
+## for Home Assistant
+systemctl enable $app@$app
+systemctl restart $app@$app
+## for Home Assistant configurator
+systemctl enable $app-configurator@$app
+systemctl restart $app-configurator@$app
+
+# reload nginx
+systemctl reload nginx

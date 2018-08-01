@@ -50,11 +50,11 @@ useradd -rm $app -G dialout,gpio
 
 # create a directory for the installation of Home Assistant
 myynh_create_dir $final_path
-chown $app:$app $final_path
+chown $app: $final_path
 
 # create a directory for the datas of Home Assistant
 myynh_create_dir $data_path
-chown $app:$app $data_path
+chown $app: $data_path
 
 # retrieve upstream version
 source ../conf/app.src
@@ -76,9 +76,9 @@ exec_as "$app" -H -s /bin/bash -c " \
 		&& deactivate \
 	"
 ## for Home Assistant configurator
-wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O $data_path/configurator.py
-chown $app:$app $data_path\configurator.py
-chmod 755 $data_path\configurator.py
+wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O "$data_path/configurator.py"
+chown $app: "$data_path\configurator.py"
+chmod 755 "$data_path\configurator.py"
 
 # set default configuration files
 ## for Home Assistant
@@ -94,7 +94,7 @@ ynh_replace_string "__PASSWORD__" "$password" "../conf/homeassistant_conf_files/
 
 ### move all homeassistant_conf_files
 cp "../conf/homeassistant_conf_files/*" "$data_path/"
-chown $app:$app "$data_path/*"
+chown $app: "$data_path/*"
 
 ## for Home Assistant configurator
 if test -n "${username_configurator:-}"; then
@@ -111,15 +111,15 @@ fi
 ynh_replace_string "__PORT__" "$port" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
 ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
 cp "../conf/homeassistant-configurator_conf_files/configurator_settings.conf" "$data_path/configurator_settings.conf"
-chown $app:$app "$data_path/configurator_settings.conf"
+chown $app: "$data_path/configurator_settings.conf"
 
 # setup up autostart using systemd
 ## for Home Assistant
 ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
-cp ../conf/$app.service /etc/systemd/system/$app@$app.service
+cp "../conf/$app.service" "/etc/systemd/system/$app@$app.service"
 ## for Home Assistant configurator
 ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/$app-configurator.service"
-cp ../conf/$app-configurator.service /etc/systemd/system/$app-configurator@$app.service
+cp "../conf/$app-configurator.service" "/etc/systemd/system/$app-configurator@$app.service"
 
 # add service in admin panel
 ## for Home Assistant

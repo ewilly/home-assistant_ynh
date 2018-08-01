@@ -1,8 +1,0 @@
-add https://www.home-assistant.io/docs/ecosystem/hass-configurator/ 
-
-
-panel_iframe:
-  configurator:
-    title: Configurator
-    icon: mdi:wrench
-    url: http://x.x.x.x:3218
