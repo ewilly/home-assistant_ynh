@@ -76,7 +76,7 @@ exec_as "$app" -H -s /bin/bash -c " \
 		&& deactivate \
 	"
 ## for Home Assistant configurator
-wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O $data_path\configurator.py
+wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O $data_path/configurator.py
 chown $app:$app $data_path\configurator.py
 chmod 755 $data_path\configurator.py
 
