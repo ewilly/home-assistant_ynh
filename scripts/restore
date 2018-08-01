@@ -19,7 +19,7 @@ port_configurator=$(ynh_app_setting_get "$app" port_configurator)
 
 # definie useful vars
 final_path="/srv/$app"
-data_path="/home/$app/.$app"
+home_path="/home/$app"
 
 # check domain/path availability
 path_url=$(ynh_normalize_url_path "/")
@@ -47,12 +47,12 @@ else
 fi
 
 # restore data
-if [ ! -d "$data_path" ]; then
-	ynh_restore_file "$data_path"
-	chown -R $app: "$data_path"
-	chmod 755 "$data_path/configurator.py"
+if [ ! -d "$home_path" ]; then
+	ynh_restore_file "$home_path"
+	chown -R $app: "$home_path/.$app"
+	chmod 755 "$home_path/.$app/configurator.py"
 else
-	ynh_die "$data_path already exists and will not be overwritten"
+	ynh_die "$home_path already exists and will not be overwritten"
 fi
 
 # TODO : restore ports

@@ -13,7 +13,7 @@ port_configurator=$(ynh_app_setting_get $app port_configurator)
 
 # definie useful vars
 final_path="/srv/$app"
-data_path="/home/$app"
+home_path="/home/$app"
 
 # remove metapackage and its dependencies
 ynh_remove_app_dependencies
@@ -25,7 +25,7 @@ ynh_secure_remove "$final_path"
 ynh_remove_nginx_config
 
 # remove a directory securely
-ynh_secure_remove "$data_path"
+ynh_secure_remove "$home_path"
 
 # remove systemd service
 ## for Home Assistant
