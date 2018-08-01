@@ -59,7 +59,7 @@
           "fr": "Choisissez un mot de passe pour Home Assistant"
         },
         "example": "super_secret_password",
-        "optional": true
+        "optional": "true"
       },
       {
         "name": "username_configurator",
@@ -68,7 +68,7 @@
           "fr": "Choisissez un nom d'utilisateur pour Home Assistant Configurator (laissez le vide si vous ne souhaitez pas un accès protégé)"
         },
         "example": "homer",
-        "optional": true
+        "optional": "true"
       },
       {
         "name": "password_configurator",
@@ -78,7 +78,7 @@
           "fr": "Choisissez un mot de passe pour Home Assistant Configurator (seulement il y a un nom d'utilisateur pour Home Assistant Configurator)"
         },
         "example": "super_secret_password",
-        "optional": true
+        "optional": "true"
       }
     ]
   }
