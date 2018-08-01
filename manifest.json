@@ -53,6 +53,7 @@
       },
       {
         "name": "password",
+        "optional": true,
         "type": "password",
         "ask": {
           "en": "Choose a password for Home Assistant",
