@@ -84,33 +84,33 @@ chmod 755 $data_path\configurator.py
 ## for Home Assistant
 ### for configuration.yaml
 if [ $has_password -eq 1 ]; then
-	ynh_replace_string "# api_password" "api_password" "../conf/configuration.yaml"
+	ynh_replace_string "# api_password" "api_password" "../conf/homeassistant_conf_files/configuration.yaml"
 fi
-ynh_replace_string "__PORT__" "$port" "../conf/configuration.yaml"
-ynh_replace_string "__DOMAIN__" "$domain" "../conf/configuration.yaml"
-cp "../conf/configuration.yaml" "$data_path/configuration.yaml"
-chown $app:$app "$data_path/configuration.yaml"
+ynh_replace_string "__PORT__" "$port" "../conf/homeassistant_conf_files/configuration.yaml"
+ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/configuration.yaml"
 
 ### for secrets.yaml
-ynh_replace_string "__PASSWORD__" "$password" "../conf/secrets.yaml"
-cp "../conf/secrets.yaml" "$data_path/secrets.yaml"
-chown $app:$app "$data_path/secrets.yaml"
+ynh_replace_string "__PASSWORD__" "$password" "../conf/homeassistant_conf_files/secrets.yaml"
+
+### move all homeassistant_conf_files
+cp "../conf/homeassistant_conf_files/*" "$data_path/"
+chown $app:$app "$data_path/*"
 
 ## for Home Assistant configurator
 if test -n "${username_configurator:-}"; then
 	### username
 	match_string='"USERNAME": null'
 	replace_string='"USERNAME": "'${username_configurator}'"'
-	ynh_replace_string "${match_string}" "${replace_string}" "../conf/configurator_settings.conf"
+	ynh_replace_string "${match_string}" "${replace_string}" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
 	### password
 	password_configurator=$(echo -n "$password_configurator" | sha256sum | cut -d " " -f 1)
 	match_string='"PASSWORD": null'
 	replace_string='"PASSWORD": "{sha256}'${password_configurator}'"'
-	ynh_replace_special_string "${match_string}" "${replace_string}" "../conf/configurator_settings.conf"
+	ynh_replace_special_string "${match_string}" "${replace_string}" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
 fi
-ynh_replace_string "__PORT__" "$port" "../conf/configurator_settings.conf"
-ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/configurator_settings.conf"
-cp "../conf/configurator_settings.conf" "$data_path/configurator_settings.conf"
+ynh_replace_string "__PORT__" "$port" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
+ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
+cp "../conf/homeassistant-configurator_conf_files/configurator_settings.conf" "$data_path/configurator_settings.conf"
 chown $app:$app "$data_path/configurator_settings.conf"
 
 # setup up autostart using systemd
