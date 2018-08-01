@@ -50,7 +50,7 @@ fi
 if [ ! -d "$data_path" ]; then
 	ynh_restore_file "$data_path"
 	chown -R $app: "$data_path"
-	chmod 755 "$data_path\configurator.py"
+	chmod 755 "$data_path/configurator.py"
 else
 	ynh_die "$data_path already exists and will not be overwritten"
 fi
@@ -60,18 +60,18 @@ fi
 
 # add service in admin panel
 ## for Home Assistant
-yunohost service add $app@$app
+yunohost service add "$app@$app.service"
 ## for Home Assistant configurator
-yunohost service add $app-configurator@$app
+yunohost service add "$app-configurator@$app.service"
 
 # enable & restart systemd service
 systemctl --system daemon-reload
 ## for Home Assistant
-systemctl enable $app@$app
-systemctl restart $app@$app
+systemctl enable "$app@$app.service"
+systemctl restart "$app@$app.service"
 ## for Home Assistant configurator
-systemctl enable $app-configurator@$app
-systemctl restart $app-configurator@$app
+systemctl enable "$app-configurator@$app.service"
+systemctl restart "$app-configurator@$app.service"
 
 # reload nginx
 systemctl reload nginx

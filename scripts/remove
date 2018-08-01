@@ -29,26 +29,26 @@ ynh_secure_remove "$data_path"
 
 # remove systemd service
 ## for Home Assistant
-systemctl stop $app@$app.service
-systemctl disable $app@$app.service
+systemctl stop "$app@$app.service"
+systemctl disable "$app@$app.service"
 ynh_secure_remove "/etc/systemd/system/$app@$app.service"
 ## for Home Assistant configurator
-systemctl stop $app-configurator@$app.service
-systemctl disable $app-configurator@$app.service
+systemctl stop "$app-configurator@$app.service"
+systemctl disable "$app-configurator@$app.service"
 ynh_secure_remove "/etc/systemd/system/$app-configurator@$app.service"
 
 # remove service from admin panel
 ## for Home Assistant
-if yunohost service status | grep -q $app@$app
+if yunohost service status | grep -q "$app@$app.service"
 then
 	echo "Remove $app@$app service"
-	yunohost service remove $app@$app.service
+	yunohost service remove "$app@$app.service"
 fi
 ## for Home Assistant configurator
-if yunohost service status | grep -q $app-configurator@$app
+if yunohost service status | grep -q "$app-configurator@$app.service"
 then
 	echo "Remove $app-configurator@$app service"
-	yunohost service remove $app-configurator@$app.service
+	yunohost service remove "$app-configurator@$app.service"
 fi
 
 # delete a system user

@@ -77,8 +77,8 @@ exec_as "$app" -H -s /bin/bash -c " \
 	"
 ## for Home Assistant configurator
 wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O "$data_path/configurator.py"
-chown $app: "$data_path\configurator.py"
-chmod 755 "$data_path\configurator.py"
+chown $app: "$data_path/configurator.py"
+chmod 755 "$data_path/configurator.py"
 
 # set default configuration files
 ## for Home Assistant
@@ -123,18 +123,18 @@ cp "../conf/$app-configurator.service" "/etc/systemd/system/$app-configurator@$a
 
 # add service in admin panel
 ## for Home Assistant
-yunohost service add $app@$app
+yunohost service add "$app@$app.service"
 ## for Home Assistant configurator
-yunohost service add $app-configurator@$app
+yunohost service add "$app-configurator@$app.service"
 
 # enable & restart systemd service
 systemctl --system daemon-reload
 ## for Home Assistant
-systemctl enable $app@$app
-systemctl restart $app@$app
+systemctl enable "$app@$app.service"
+systemctl restart "$app@$app.service"
 ## for Home Assistant configurator
-systemctl enable $app-configurator@$app
-systemctl restart $app-configurator@$app
+systemctl enable "$app-configurator@$app.service"
+systemctl restart "$app-configurator@$app.service"
 
 # create a dedicated nginx config
 ## for Home Assistant configurator (before because ynh_add_nginx_config reload nginx and give an error due to __PORT-CONFIGURATOR__)
