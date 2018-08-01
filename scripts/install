@@ -93,7 +93,7 @@ ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/conf
 ynh_replace_string "__PASSWORD__" "$password" "../conf/homeassistant_conf_files/secrets.yaml"
 
 ### move all homeassistant_conf_files
-cp "../conf/homeassistant_conf_files/." "$data_path/"
+cp -r "../conf/homeassistant_conf_files/." "$data_path/"
 chown $app: "$data_path/."
 
 ## for Home Assistant configurator
