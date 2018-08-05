@@ -45,10 +45,10 @@ then
 	yunohost service remove "$app@$app.service"
 fi
 ## for Home Assistant configurator
-if yunohost service status | grep -q "$app-configurator@$app.service"
+if yunohost service status | grep -q "$app-configurator@$app"
 then
 	echo "Remove $app-configurator@$app service"
-	yunohost service remove "$app-configurator@$app.service"
+	yunohost service remove "$app-configurator@$app"
 fi
 
 # delete a system user

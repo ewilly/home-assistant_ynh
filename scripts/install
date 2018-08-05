@@ -121,9 +121,9 @@ cp "../conf/$app-configurator.service" "/etc/systemd/system/$app-configurator@$a
 
 # add service in admin panel
 ## for Home Assistant
-yunohost service add "$app@$app.service"
+yunohost service add "$app@$app" --log "$data_path/home-assistant.log"
 ## for Home Assistant configurator
-yunohost service add "$app-configurator@$app.service"
+yunohost service add "$app-configurator@$app"
 
 # enable & restart systemd service
 systemctl --system daemon-reload
