@@ -43,13 +43,13 @@
         "default": true
       },
       {
-        "name": "has_password",
-        "type": "boolean",
+        "name": "admin",
+        "type": "user",
         "ask": {
-          "en": "Should we add a password to access to the app? (if not, don't turn it to public!)",
-          "fr": "Doit-on ajouter une demande de mot de passe pour accéder à cette application  ? (dans le cas contraire, ne laisser pas le mode publique !)"
+          "en": "Choose the Home Assistant administrator",
+          "fr": "Choisissez l'administrateur de Home Assistant"
         },
-        "default": true
+        "example": "homer"
       },
       {
         "name": "password",
@@ -58,8 +58,7 @@
           "en": "Choose a password for Home Assistant",
           "fr": "Choisissez un mot de passe pour Home Assistant"
         },
-        "example": "super_secret_password",
-        "optional": "true"
+        "example": "super_secret_password"
       },
       {
         "name": "username_configurator",

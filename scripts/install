@@ -11,7 +11,7 @@ ynh_abort_if_errors
 app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
-has_password=$YNH_APP_ARG_HAS_PASSWORD
+admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
 username_configurator=$YNH_APP_ARG_USERNAME_CONFIGURATOR
 password_configurator=$YNH_APP_ARG_PASSWORD_CONFIGURATOR
@@ -30,8 +30,8 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 # save app settings
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app has_password $has_password
-[[ ! -z $password ]] && ynh_app_setting_set $app password $password
+ynh_app_setting_set $app admin $admin
+ynh_app_setting_set $app password $password
 [[ ! -z $username_configurator ]] && ynh_app_setting_set $app username_configurator $username_configurator
 [[ ! -z $password_configurator ]] && ynh_app_setting_set $app password_configurator $password_configurator
 
@@ -78,17 +78,18 @@ wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM
 chown $app: "$data_path/configurator.py"
 chmod 755 "$data_path/configurator.py"
 
+# create admin user
+exec_as "$app" -H -s /bin/bash -c " \
+	$final_path/hass --script auth \
+	--config $data_path \
+	add $admin $password \
+	"
+
 # set default configuration files
 ## for Home Assistant
 ### for configuration.yaml
-if [ $has_password -eq 1 ]; then
-	ynh_replace_string "# api_password" "api_password" "../conf/homeassistant_conf_files/configuration.yaml"
-fi
 ynh_replace_string "__PORT__" "$port" "../conf/homeassistant_conf_files/configuration.yaml"
 ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/configuration.yaml"
-
-### for secrets.yaml
-ynh_replace_string "__PASSWORD__" "$password" "../conf/homeassistant_conf_files/secrets.yaml"
 
 ### move all homeassistant_conf_files
 cp -r "../conf/homeassistant_conf_files/." "$data_path/"
