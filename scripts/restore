@@ -15,7 +15,6 @@ ynh_abort_if_errors
 app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get "$app" domain)
 port=$(ynh_app_setting_get "$app" port)
-port_configurator=$(ynh_app_setting_get "$app" port_configurator)
 
 # definie useful vars
 final_path="/srv/$app"
@@ -37,7 +36,6 @@ ynh_system_user_exists "$app" || \
 # restore conf files
 ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_restore_file "/etc/systemd/system/$app@$app.service"
-ynh_restore_file "/etc/systemd/system/$app-configurator@$app.service"
 
 # restore source
 if [ ! -d "$final_path" ]; then
@@ -50,7 +48,6 @@ fi
 if [ ! -d "$home_path" ]; then
 	ynh_restore_file "$home_path"
 	chown -R $app: "$home_path/.$app"
-	chmod 755 "$home_path/.$app/configurator.py"
 else
 	ynh_die "$home_path already exists and will not be overwritten"
 fi
@@ -59,19 +56,12 @@ fi
 
 
 # add service in admin panel
-## for Home Assistant
-yunohost service add "$app@$app.service"
-## for Home Assistant configurator
-yunohost service add "$app-configurator@$app.service"
+yunohost service add "$app@$app" --log "$data_path/home-assistant.log"
 
 # enable & restart systemd service
 systemctl --system daemon-reload
-## for Home Assistant
 systemctl enable "$app@$app.service"
 systemctl restart "$app@$app.service"
-## for Home Assistant configurator
-systemctl enable "$app-configurator@$app.service"
-systemctl restart "$app-configurator@$app.service"
 
 # reload nginx
 systemctl reload nginx

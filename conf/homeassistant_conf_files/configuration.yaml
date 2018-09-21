@@ -79,10 +79,3 @@ cloud:
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
-
-# Configurator
-panel_iframe:
-  configurator:
-    title: Configurator
-    icon: mdi:wrench
-    url: https://__DOMAIN__/configurator

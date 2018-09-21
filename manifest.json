@@ -19,8 +19,7 @@
   "multi_instance": false,
   "services": [
       "nginx",
-      "homeassistant@homeassistant",      
-      "homeassistant-configurator@homeassistant"
+      "homeassistant@homeassistant"
   ],
   "arguments": {
     "install": [
@@ -56,28 +55,9 @@
         "type": "password",
         "ask": {
           "en": "Choose a password for Home Assistant",
-          "fr": "Choisissez un mot de passe pour Home Assistant"
+          "fr": "Choisissez le mot de passe pour l'administrateur Home Assistant"
         },
         "example": "super_secret_password"
-      },
-      {
-        "name": "username_configurator",
-        "ask": {
-          "en": "Choose a username for Home Assistant Configurator (leave it empty if you don't want to set up a protected access)",
-          "fr": "Choisissez un nom d'utilisateur pour Home Assistant Configurator (laissez le vide si vous ne souhaitez pas un accès protégé)"
-        },
-        "example": "homer",
-        "optional": "true"
-      },
-      {
-        "name": "password_configurator",
-        "type": "password",
-        "ask": {
-          "en": "Choose a password for Home Assistant Configurator (only if username for Home Assistant Configurator is not empty)",
-          "fr": "Choisissez un mot de passe pour Home Assistant Configurator (seulement il y a un nom d'utilisateur pour Home Assistant Configurator)"
-        },
-        "example": "super_secret_password",
-        "optional": "true"
       }
     ]
   }

@@ -13,8 +13,6 @@ domain=$YNH_APP_ARG_DOMAIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
-username_configurator=$YNH_APP_ARG_USERNAME_CONFIGURATOR
-password_configurator=$YNH_APP_ARG_PASSWORD_CONFIGURATOR
 # definie useful vars
 final_path="/srv/$app"
 data_path="/home/$app/.$app"
@@ -32,18 +30,11 @@ ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app is_public $is_public
 ynh_app_setting_set $app admin $admin
 ynh_app_setting_set $app password $password
-[[ ! -z $username_configurator ]] && ynh_app_setting_set $app username_configurator $username_configurator
-[[ ! -z $password_configurator ]] && ynh_app_setting_set $app password_configurator $password_configurator
 
 # find a free port & open it
-## for Home Assistant 
 port=$(ynh_find_port 8123)
 ynh_app_setting_set $app port $port
 yunohost firewall allow TCP $port > /dev/null 2>&1
-## for Home Assistant configurator
-port_configurator=$(ynh_find_port 3218)
-ynh_app_setting_set $app port_configurator $port_configurator
-yunohost firewall allow TCP $port_configurator > /dev/null 2>&1
 
 # create a dedicated system user
 useradd -rm $app -G dialout,gpio
@@ -59,10 +50,8 @@ chown $app: $data_path
 # retrieve upstream version
 source ../conf/app.src
 ynh_app_setting_set $app ha_version $UPSTREAM_HA_VERSION
-ynh_app_setting_set $app configurator_version $UPSTREAM_CONFIGURATOR_VERSION
 
-# installation
-## for Home Assistant in a virtual environment
+# installation in a virtual environment
 exec_as "$app" -H -s /bin/bash -c " \
 	echo 'create the virtual environment' \
 		&& python3 -m venv $final_path \
@@ -73,10 +62,6 @@ exec_as "$app" -H -s /bin/bash -c " \
 	&& echo 'install Home Assistant' \
 		&& pip3 install --upgrade $app==$UPSTREAM_HA_VERSION \
 	"
-## for Home Assistant configurator
-wget https://raw.githubusercontent.com/danielperna84/hass-configurator/$UPSTREAM_CONFIGURATOR_VERSION/configurator.py -O "$data_path/configurator.py"
-chown $app: "$data_path/configurator.py"
-chmod 755 "$data_path/configurator.py"
 
 # create admin user
 exec_as "$app" -H -s /bin/bash -c " \
@@ -86,59 +71,27 @@ exec_as "$app" -H -s /bin/bash -c " \
 	"
 
 # set default configuration files
-## for Home Assistant
-### for configuration.yaml
+## for configuration.yaml
 ynh_replace_string "__PORT__" "$port" "../conf/homeassistant_conf_files/configuration.yaml"
 ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/configuration.yaml"
 
-### move all homeassistant_conf_files
+## move all homeassistant_conf_files
 cp -r "../conf/homeassistant_conf_files/." "$data_path/"
 chown -R $app: "$data_path"
 
-## for Home Assistant configurator
-if test -n "${username_configurator:-}"; then
-	### username
-	match_string='"USERNAME": null'
-	replace_string='"USERNAME": "'${username_configurator}'"'
-	ynh_replace_string "${match_string}" "${replace_string}" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
-	### password
-	password_configurator=$(echo -n "$password_configurator" | sha256sum | cut -d " " -f 1)
-	match_string='"PASSWORD": null'
-	replace_string='"PASSWORD": "{sha256}'${password_configurator}'"'
-	ynh_replace_special_string "${match_string}" "${replace_string}" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
-fi
-ynh_replace_string "__PORT__" "$port" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
-ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/homeassistant-configurator_conf_files/configurator_settings.conf"
-cp "../conf/homeassistant-configurator_conf_files/configurator_settings.conf" "$data_path/configurator_settings.conf"
-chown $app: "$data_path/configurator_settings.conf"
-
 # setup up autostart using systemd
-## for Home Assistant
 ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
 cp "../conf/$app.service" "/etc/systemd/system/$app@$app.service"
-## for Home Assistant configurator
-ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/$app-configurator.service"
-cp "../conf/$app-configurator.service" "/etc/systemd/system/$app-configurator@$app.service"
 
 # add service in admin panel
-## for Home Assistant
 yunohost service add "$app@$app" --log "$data_path/home-assistant.log"
-## for Home Assistant configurator
-yunohost service add "$app-configurator@$app"
 
 # enable & restart systemd service
 systemctl --system daemon-reload
-## for Home Assistant
 systemctl enable "$app@$app.service"
 systemctl restart "$app@$app.service"
-## for Home Assistant configurator
-systemctl enable "$app-configurator@$app.service"
-systemctl restart "$app-configurator@$app.service"
 
 # create a dedicated nginx config
-## for Home Assistant configurator (before because ynh_add_nginx_config reload nginx and give an error due to __PORT-CONFIGURATOR__)
-ynh_replace_string "__PORT-CONFIGURATOR__" "$port_configurator" "../conf/nginx.conf"
-## for Home Assistant
 ynh_add_nginx_config
 
 # reload nginx
