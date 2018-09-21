@@ -26,18 +26,17 @@ ynh_remove_nginx_config
 # remove a directory securely
 ynh_secure_remove "$home_path"
 
-# remove systemd service
-## for Home Assistant
-systemctl stop "$app@$app.service"
-systemctl disable "$app@$app.service"
-ynh_secure_remove "/etc/systemd/system/$app@$app.service"
-
 # remove service from admin panel
 if yunohost service status | grep -q "$app@$app"
 then
 	echo "Remove $app@$app service"
 	yunohost service remove "$app@$app"
 fi
+
+# remove systemd service
+systemctl stop "$app@$app.service"
+systemctl disable "$app@$app.service"
+ynh_secure_remove "/etc/systemd/system/$app@$app.service"
 
 # delete a system user
 ynh_system_user_delete "$app"
