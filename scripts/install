@@ -74,7 +74,7 @@ chown -R $app: "$data_path"
 
 # create admin user
 exec_as "$app" -H -s /bin/bash -c " \
-	python3 -m final_path/hass \
+	python3 -m $final_path/hass \
 	--script auth \
 	--config $data_path \
 	add $admin $password \
