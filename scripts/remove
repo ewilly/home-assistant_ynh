@@ -38,8 +38,8 @@ systemctl stop "$app@$app.service"
 systemctl disable "$app@$app.service"
 ynh_secure_remove "/etc/systemd/system/$app@$app.service"
 
-# delete a system user
-ynh_system_user_delete "$app"
-
 # close port
 yunohost firewall disallow TCP $port > /dev/null 2>&1
+
+# delete a system user
+ynh_system_user_delete "$app"
