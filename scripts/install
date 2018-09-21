@@ -63,13 +63,6 @@ exec_as "$app" -H -s /bin/bash -c " \
 		&& pip3 install --upgrade $app==$UPSTREAM_HA_VERSION \
 	"
 
-# create admin user
-exec_as "$app" -H -s /bin/bash -c " \
-	$final_path/hass --script auth \
-	--config $data_path \
-	add $admin $password \
-	"
-
 # set default configuration files
 ## for configuration.yaml
 ynh_replace_string "__PORT__" "$port" "../conf/homeassistant_conf_files/configuration.yaml"
@@ -78,6 +71,13 @@ ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/conf
 ## move all homeassistant_conf_files
 cp -r "../conf/homeassistant_conf_files/." "$data_path/"
 chown -R $app: "$data_path"
+
+# create admin user
+exec_as "$app" -H -s /bin/bash -c " \
+	$final_path/hass --script auth \
+	--config $data_path \
+	add $admin $password \
+	"
 
 # setup up autostart using systemd
 ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
