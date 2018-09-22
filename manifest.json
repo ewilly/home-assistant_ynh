@@ -42,20 +42,11 @@
         "default": true
       },
       {
-        "name": "admin",
-        "type": "user",
-        "ask": {
-          "en": "Choose the Home Assistant administrator",
-          "fr": "Choisissez l'administrateur de Home Assistant"
-        },
-        "example": "homer"
-      },
-      {
         "name": "password",
         "type": "password",
         "ask": {
           "en": "Choose a password for Home Assistant",
-          "fr": "Choisissez le mot de passe pour l'administrateur Home Assistant"
+          "fr": "Choisissez le mot de passe pour Home Assistant"
         },
         "example": "super_secret_password"
       }

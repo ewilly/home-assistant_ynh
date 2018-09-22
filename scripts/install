@@ -11,7 +11,6 @@ ynh_abort_if_errors
 app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
-admin=$YNH_APP_ARG_ADMIN
 password=$YNH_APP_ARG_PASSWORD
 # definie useful vars
 final_path="/srv/$app"
@@ -28,7 +27,6 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 # save app settings
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app admin $admin
 ynh_app_setting_set $app password $password
 
 # find a free port & open it
@@ -64,23 +62,13 @@ exec_as "$app" -H -s /bin/bash -c " \
 	"
 
 # set default configuration files
-## for configuration.yaml
 ynh_replace_string "__PORT__" "$port" "../conf/homeassistant_conf_files/configuration.yaml"
 ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/configuration.yaml"
-
-# TODO : if [ $is_public -eq 0 ]; then pas de user/mot de passe
+ynh_replace_string "__PASSWORD__" "$domain" "../conf/homeassistant_conf_files/secrets.yaml"
 
 ## move all homeassistant_conf_files
 cp -r "../conf/homeassistant_conf_files/." "$data_path/"
 chown -R $app: "$data_path"
-
-# create admin user
-exec_as "$app" -H -s /bin/bash -c " \
-	$final_path/bin/hass \
-	--script auth \
-	--config $data_path \
-	add $admin $password \
-	"
 
 # setup up autostart using systemd
 ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
@@ -95,6 +83,11 @@ systemctl enable "$app@$app.service"
 systemctl restart "$app@$app.service"
 
 # create a dedicated nginx config
+if [ $is_public -eq 0 ]; then 
+	match_string='#proxy_set_header x-ha-access "__PASSWORD__"'
+	replace_string='proxy_set_header x-ha-access "'${password}'"'
+	ynh_replace_string "${match_string}" "${replace_string}" "../conf/nginx.conf"
+fi
 ynh_add_nginx_config
 
 # reload nginx

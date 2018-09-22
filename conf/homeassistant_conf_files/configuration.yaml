@@ -1,6 +1,6 @@
 http:
   # Secrets are defined in the file secrets.yaml
-  # api_password: !secret http_password
+  api_password: !secret http_password
   # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
   base_url: __DOMAIN__:__PORT__
   server_port: __PORT__
@@ -15,6 +15,9 @@ http:
   login_attempts_threshold: 5
   
 homeassistant:
+  # Auth provider
+  auth_providers:
+    - type: legacy_api_password
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
