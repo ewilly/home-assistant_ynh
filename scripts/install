@@ -75,12 +75,12 @@ cp -r "../conf/homeassistant_conf_files/." "$data_path/"
 chown -R $app: "$data_path"
 
 # create admin user
-#exec_as "$app" -H -s /bin/bash -c " \
-#	python3 -m $final_path/hass \
-#	--script auth \
-#	--config $data_path \
-#	add $admin $password \
-#	"
+exec_as "$app" -H -s /bin/bash -c " \
+	$final_path/bin/hass \
+	--script auth \
+	--config $data_path \
+	add $admin $password \
+	"
 
 # setup up autostart using systemd
 ynh_replace_string "__PORT__" "$port" "../conf/$app.service"
