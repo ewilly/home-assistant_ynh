@@ -11,7 +11,6 @@ ynh_abort_if_errors
 app=$YNH_APP_INSTANCE_NAME
 domain=$YNH_APP_ARG_DOMAIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
-password=$YNH_APP_ARG_PASSWORD
 # definie useful vars
 final_path="/srv/$app"
 data_path="/home/$app/.$app"
@@ -27,7 +26,6 @@ ynh_install_app_dependencies "$PKG_DEPENDENCIES"
 # save app settings
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app password $password
 
 # find a free port & open it
 port=$(ynh_find_port 8123)
@@ -64,7 +62,6 @@ exec_as "$app" -H -s /bin/bash -c " \
 # set default configuration files
 ynh_replace_string "__PORT__" "$port" "../conf/homeassistant_conf_files/configuration.yaml"
 ynh_replace_string "__DOMAIN__" "$domain" "../conf/homeassistant_conf_files/configuration.yaml"
-ynh_replace_string "__PASSWORD__" "$domain" "../conf/homeassistant_conf_files/secrets.yaml"
 
 ## move all homeassistant_conf_files
 cp -r "../conf/homeassistant_conf_files/." "$data_path/"
@@ -83,11 +80,6 @@ systemctl enable "$app@$app.service"
 systemctl restart "$app@$app.service"
 
 # create a dedicated nginx config
-if [ $is_public -eq 0 ]; then 
-	match_string='#proxy_set_header x-ha-access "__PASSWORD__"'
-	replace_string='proxy_set_header x-ha-access "'${password}'"'
-	ynh_replace_string "${match_string}" "${replace_string}" "../conf/nginx.conf"
-fi
 ynh_add_nginx_config
 
 # reload nginx
@@ -97,3 +89,6 @@ systemctl reload nginx
 if [ $is_public -eq 1 ]; then
 	ynh_app_setting_set "$app" unprotected_uris "/"
 fi
+
+# alert about administrator creator
+ynh_print_info "Your installation is not yet secure : please, IMMEDIATELY go to $domain in order to create the admin user of Home Assistant." >&2

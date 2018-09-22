@@ -12,7 +12,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get $app domain)
 port=$(ynh_app_setting_get $app port)
 is_public=$(ynh_app_setting_get $app is_public)
-password=$(ynh_app_setting_get $app password)
 
 # definie useful vars
 final_path="/srv/$app"
@@ -60,11 +59,6 @@ systemctl enable "$app@$app.service"
 systemctl restart "$app@$app.service"
 
 # create a dedicated nginx config
-if [ $is_public -eq 0 ]; then 
-	match_string='#proxy_set_header x-ha-access "__PASSWORD__"'
-	replace_string='proxy_set_header x-ha-access "'${password}'"'
-	ynh_replace_string "${match_string}" "${replace_string}" "../conf/nginx.conf"
-fi
 ynh_add_nginx_config
 
 # reload nginx
