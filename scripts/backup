@@ -1,6 +1,6 @@
 #!/bin/bash
 # to test the functionnality :
-# yunohost backup create -n "homeassistant-test" --ignore-system --apps homeassistant
+# yunohost backup create -n "homeassistant-test" --apps homeassistant
 # yunohost backup delete homeassistant-test
 
 set -eu
