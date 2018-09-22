@@ -33,10 +33,6 @@ systemctl stop "$app@$app.service"
 systemctl disable "$app@$app.service"
 systemctl --system daemon-reload
 
-# retrieve upstream version
-source ../conf/app.src
-ynh_app_setting_set $app ha_version $UPSTREAM_HA_VERSION
-
 # upgrade
 exec_as "$app" -H -s /bin/bash -c " \
 	echo 'create the virtual environment' \
@@ -46,7 +42,7 @@ exec_as "$app" -H -s /bin/bash -c " \
 	&& echo 'install a required python package' \
 		&& python3 -m pip install --upgrade wheel \
 	&& echo 'install Home Assistant' \
-		&& pip3 install --upgrade $app==$UPSTREAM_HA_VERSION \
+		&& pip3 install --upgrade $app \
 	"
 
 # setup up autostart using systemd
