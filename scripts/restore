@@ -5,7 +5,6 @@
 # yunohost backup restore "homeassistant-test"
 
 set -eu
-source _common.sh
 source /usr/share/yunohost/helpers
 
 # manage script failure
