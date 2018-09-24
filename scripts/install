@@ -87,4 +87,4 @@ if [ $is_public -eq 1 ]; then
 fi
 
 # alert about administrator creator
-ynh_print_info "Your installation is not yet secure : please, IMMEDIATELY go to $domain in order to create the admin user of Home Assistant." >&2
+ynh_print_warn "Your installation is not yet secure : please, IMMEDIATELY go to $domain in order to create the admin user of Home Assistant."
